@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PulsePlan | Fitness Planner & Health Tracker</title>
+    <meta      
+        name="description"
+        content="PulsePlan is a pure HTML, CSS, and vanilla JavaScript fitness planner with workouts, meals, hydration, goals, calculators, and progress tracking."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <div class="brand-mark">PP</div>
+          <div>
+            <p class="eyebrow">FITNESS SYSTEM</p>
+            <h1>PulsePlan</h1>
+          </div>
+        </div>
+
+        <nav class="side-nav">
+          <a href="#overview" class="nav-link active" data-section-link="overview">
+            <span>Dashboard</span>
+          </a>
+          <a href="#workouts" class="nav-link" data-section-link="workouts">
+            <span>Workouts</span>
+          </a>
+          <a href="#nutrition" class="nav-link" data-section-link="nutrition">
+            <span>Nutrition</span>
+          </a>
+          <a href="#hydration" class="nav-link" data-section-link="hydration">
+            <span>Hydration</span>
+          </a>
+          <a href="#goals" class="nav-link" data-section-link="goals">
+            <span>Goals</span>
+          </a>
+          <a href="#progress" class="nav-link" data-section-link="progress">
+            <span>Progress</span>
+          </a>
+          <a href="#tools" class="nav-link" data-section-link="tools">
+            <span>Calculators</span>
+          </a>
+        </nav>
+
+        <section class="sidebar-card">
+          <p class="sidebar-label">TODAY'S INTENSITY</p>
+          <div class="intensity-ring">
+            <div class="intensity-core">
+              <strong id="sidebarIntensityScore">0%</strong>
+              <span>Loaded</span>
+            </div>
+          </div>
+          <p class="muted-text">
+            Your score combines workouts, hydration, food consistency, and active goals.
+          </p>
+        </section>
+
+        <section class="sidebar-card compact">
+          <div class="row-between">
+            <div>
+              <p class="sidebar-label">STREAK</p>
+              <strong id="sidebarStreak">0 days</strong>
+            </div>
+            <button id="seedDemoBtn" class="ghost-button" type="button">Load Demo</button>
+          </div>
+        </section>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">PERSONAL FITNESS HQ</p>
+            <h2>Plan stronger days with a single dashboard.</h2>
+          </div>
+          <div class="topbar-actions">
+            <button id="themeToggleBtn" class="secondary-button" type="button">Toggle Theme</button>
+            <button id="resetDataBtn" class="primary-button subtle-danger" type="button">Reset Data</button>
+          </div>
+        </header>
+
+        <section id="overview" class="page-section active">
+          <div class="hero-panel">
+            <div class="hero-copy">
+              <p class="eyebrow">WEEKLY FOCUS</p>
+              <h3>Build momentum with workouts, meals, and measurable progress.</h3>
+              <p>
+                PulsePlan helps you organize training sessions, watch nutrition trends,
+                hit water targets, and keep your health metrics in one clean place.
+              </p>
+              <div class="hero-pills">
+                <span class="pill" id="heroWorkoutCount">0 workouts scheduled</span>
+                <span class="pill" id="heroCaloriesCount">0 calories tracked</span>
+                <span class="pill" id="heroWaterCount">0 ml water today</span>
+              </div>
+            </div>
+            <div class="hero-visual">
+              <div class="orb orb-a"></div>
+              <div class="orb orb-b"></div>
+              <div class="summary-stack">
+                <article class="glass-card">
+                  <p>Recovery Index</p>
+                  <strong id="recoveryIndex">76%</strong>
+                </article>
+                <article class="glass-card">
+                  <p>Focus Goal</p>
+                  <strong id="focusGoalText">Strength Phase</strong>
+                </article>
+              </div>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card accent-cyan">
+              <p class="stat-label">Workouts This Week</p>
+              <strong id="statWorkoutsWeek">0</strong>
+              <span id="statWorkoutMinutes">0 total minutes</span>
+            </article>
+            <article class="stat-card accent-orange">
+              <p class="stat-label">Nutrition Today</p>
+              <strong id="statCaloriesToday">0 kcal</strong>
+              <span id="statProteinToday">0g protein logged</span>
+            </article>
+            <article class="stat-card accent-lime">
+              <p class="stat-label">Hydration</p>
+              <strong id="statWaterToday">0 ml</strong>
+              <span id="statWaterProgress">0% of daily target</span>
+            </article>
+            <article class="stat-card accent-pink">
+              <p class="stat-label">Goal Completion</p>
+              <strong id="statGoalsDone">0 / 0</strong>
+              <span id="statGoalPercent">0% complete</span>
+            </article>
+          </div>
+
+          <div class="dashboard-layout">
+            <section class="panel-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-kicker">ACTIVITY OVERVIEW</p>
+                  <h3>Weekly training load</h3>
+                </div>
+                <span class="head-chip">Last 7 days</span>
+              </div>
+              <div id="weeklyWorkoutChart" class="bar-chart" aria-label="Weekly workout chart"></div>
+            </section>
+
+            <section class="panel-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-kicker">TODAY'S TARGETS</p>
+                  <h3>Daily rings</h3>
+                </div>
+              </div>
+              <div class="progress-ring-grid">
+                <article class="ring-card">
+                  <div class="progress-ring" data-ring="steps">
+                    <div class="progress-ring__value" id="stepsRingValue">0%</div>
+                  </div>
+                  <h4>Movement</h4>
+                  <p id="stepsRingText">0 / 10000 steps</p>
+                </article>
+                <article class="ring-card">
+                  <div class="progress-ring" data-ring="water">
+                    <div class="progress-ring__value" id="waterRingValue">0%</div>
+                  </div>
+                  <h4>Hydration</h4>
+                  <p id="waterRingText">0 / 3000 ml</p>
+                </article>
+                <article class="ring-card">
+                  <div class="progress-ring" data-ring="protein">
+                    <div class="progress-ring__value" id="proteinRingValue">0%</div>
+                  </div>
+                  <h4>Protein</h4>
+                  <p id="proteinRingText">0 / 140 g</p>
+                </article>
+              </div>
+            </section>
+
+            <section class="panel-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-kicker">UPCOMING PLAN</p>
+                  <h3>Next workouts</h3>
+                </div>
+              </div>
+              <div id="overviewWorkoutList" class="stack-list"></div>
+            </section>
+
+            <section class="panel-card">
+              <div class="card-head">
+                <div>
+                  <p class="section-kicker">MICRO INSIGHTS</p>
+                  <h3>Coach notes</h3>
+                </div>
+              </div>
+              <div id="insightsList" class="insight-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="workouts" class="page-section">
+          <div class="section-title-row">
+            <div>
+              <p class="section-kicker">TRAINING PLANNER</p>
+              <h3>Program your week and log sessions</h3>
+            </div>
+            <span class="head-chip">Strength, cardio, mobility, sports</span>
+          </div>
+
+          <div class="two-column-layout">
+            <section class="panel-card">
+              <div class="card-head">
+                <h3>Add workout session</h3>
+              </div>
+              <form id="workoutForm" class="form-grid">
+                <label>
+                  Workout name
+                  <input type="text" name="name" placeholder="Upper Body Power" required />
+                </label>
+                <label>
+                  Type                
+                    <select name="type" required>
+                    <option value="Strength">Strength</option>
+                    <option value="Cardio">Cardio</option>
+                    <option value="Mobility">Mobility</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Recovery">Recovery</option>
+                  </select>
+                </label>
+                <label>
+                  Date
+                  <input type="date" name="date" required />
+                </label>
+                <label>
+                  Duration (min)
+                  <input type="number" name="duration" min="10" max="240" value="45" required />
+                </label>
+                <label>
+                  Intensity                 
+                    <select name="intensity" required>
+                    <option value="Low">Low</option>
+                    <option value="Moderate" selected>Moderate</option>
+                    <option value="High">High</option>
+                  </select>
+                </label>
+                <label>
+                  Calories burned
+                  <input type="number" name="caloriesBurned" min="0" max="3000" value="300" required />
+                </label>
+                <label class="full-width">
+                  Focus <textarea
+                    name="notes"
+                    rows="4"
+                    placeholder="Main lifts, intervals, mobility focus, or how you want to feel after this workout."
+                  ></textarea>
+                </label>
+                <button class="primary-button" type="submit">Save Workout</button>
+              </form>
+            </section>
+
+            <section class="panel-card">
+              <div class="card-head">
+                <div>
+                  <h3>Workout summary</h3>
+                  <p class="card-meta">See your distribution and completion status.</p>
+                </div>
+                <div class="inline-chips">
+                  <span class="tiny-chip" id="workoutPendingCount">0 pending</span>
+                  <span class="tiny-chip success" id="workoutCompletedCount">0 completed</span>
+                </div>
+              </div>
+              <div id="workoutTypeBreakdown" class="chip-grid"></div>
+              <div id="workoutList" class="session-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="nutrition" class="page-section">
+          <div class="section-title-row">
+            <div>
+              <p class="section-kicker">MEAL TRACKER</p>
+              <h3>Log meals and macronutrients</h3>
+            </div>
+            <span class="head-chip">Calories, protein, carbs, fats</span>
+          </div>
+
+          <div class="two-column-layout">
+            <section class="panel-card">
+              <div class="card-head">
+                <h3>Add meal entry</h3>
+              </div>
+              <form id="mealForm" class="form-grid">
+                <label>
+                  Meal name
+                  <input type="text" name="name" placeholder="Grilled Chicken Bowl" required />
+                </label>
+                <label>
+                  Meal type
+                    <select name="mealType" required>
+                    <option value="Breakfast">Breakfast</option>
+                    <option value="Lunch">Lunch</option>
+                    <option value="Dinner">Dinner</option>
+                    <option value="Snack">Snack</option>
+                    <option value="Shake">Shake</option>
+                  </select>
+                </label>
+                <label>
+                  Date
+                  <input type="date" name="date" required />
+                </label>
+                <label>
+                  Calories
+                 <input type="number" name="calories" min="0" max="4000" value="450" required />
+                </label>
+                <label>
+                  Protein (g)
+                  <input type="number" name="protein" min="0" max="300" value="30" required />
+                </label>
+                <label>
+                  Carbs (g)
+                  <input type="number" name="carbs" min="0" max="500" value="40" required />
+                </label>
+                <label>
+                  Fats (g)
+                  <input type="number" name="fats" min="0" max="200" value="15" required />
+                </label>
+                <label class="full-width">
+                  Notes 
+                    <textarea
+                    name="notes"
+                    rows="4"
+                    placeholder="Ingredients, pre-workout timing, or what you would improve next time."
+                  ></textarea>
+                </label>
+                <button class="primary-button" type="submit">Save Meal</button>
+              </form>
+            </section>
+
+            <section class="panel-card">
+              <div class="card-head">
+                <div>
+                  <h3>Nutrition dashboard</h3>
+                  <p class="card-meta">Daily intake and meal timing patterns.</p>
+                </div>
+              </div>
+              <div class="macro-summary-grid">
+                <article class="macro-card">
+                  <span>Calories</span>
+                  <strong id="macroCalories">0</strong>
+                </article>
+                <article class="macro-card">
+                  <span>Protein</span>
+                  <strong id="macroProtein">0g</strong>
+                </article>
+                <article class="macro-card">
+                  <span>Carbs</span>
+                  <strong id="macroCarbs">0g</strong>
+                </article>
+                <article class="macro-card">
+                  <span>Fats</span>
+                  <strong id="macroFats">0g</strong>
+                </article>
+              </div>
+              <div id="macroBars" class="macro-bars"></div>
+              <div id="mealList" class="session-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="hydration" class="page-section">
+          <div class="section-title-row">
+            <div>
+              <p class="section-kicker">WATER TRACKER</p>
+              <h3>Stay consistent with hydration habits</h3>
+            </div>
+            <span class="head-chip">Quick-add cups and daily target</span>
+          </div>
+
+          <div class="three-column-layout">
+            <section class="panel-card">
+              <div class="card-head">
+                <h3>Hydration settings</h3>
+              </div>
+              <form id="hydrationTargetForm" class="form-grid">
+                <label>
+                  Daily target (ml)
+                  <input type="number" name="target" min="500" max="10000" value="3000" required />
+                </label>
+                <label>
+                  Reminder intervals                  <select name="interval">
+                    <option value="60">Every 60 min</option>
+                    <option value="90" selected>Every 90 min</option>
+                    <option value="120">Every 120 min</option>
+                    <option value="180">Every 180 min</option>
+                  </select>
+                </label>
+                <button class="primary-button" type="submit">Update Target</button>
+              </form>
+
+              <div class="quick-water-grid">
+                <button class="secondary-button quick-water-btn" data-amount="250" type="button">+250 ml</button>
+                <button class="secondary-button quick-water-btn" data-amount="500" type="button">+500 ml</button>
+                <button class="secondary-button quick-water-btn" data-amount="750" type="button">+750 ml</button>
+                <button class="secondary-button quick-water-btn" data-amount="1000" type="button">+1000 ml</button>
+              </div>
+
+              <form id="hydrationEntryForm" class="form-grid">
+                <label>
+                  Custom amount (ml)
+                  <input type="number" name="amount" min="50" max="3000" value="300" required />
+                </label>
+                <label>
+                  Time label
+                    <input type="text" name="timeLabel" placeholder="Post workout" required />
+                </label>
+                <button class="primary-button" type="submit">Add Water Log</button>
+              </form>
+            </section>
+
+            <section class="panel-card">
+              <div class="card-head">
+                <h3>Hydration meter</h3>
+              </div>
+              <div class="hydration-meter">
+                <div class="hydration-fill" id="hydrationFill"></div>
+                <div class="hydration-content">
+                  <strong id="hydrationAmountText">0 ml</strong>
+                  <span id="hydrationTargetText">Target 3000 ml</span>
+                </div>
+              </div>
+              <div id="hydrationTimeline" class="timeline-list"></div>
+            </section>
+
+            <section class="panel-card">
+              <div class="card-head">
+                <h3>Recovery helpers</h3>
+              </div>
+              <div class="tip-stack">
+                <article class="tip-card">
+                  <strong>Morning start</strong>
+                  <p>Drink 300-500 ml within your first hour awake to break your overnight fast.</p>
+                </article>
+                <article class="tip-card">
+                  <strong>Workout timing</strong>
+                  <p>Hydrate before training and take frequent small sips during long or intense sessions.</p>
+                </article>
+                <article class="tip-card">
+                  <strong>Food pairing</strong>
+                  <p>Adding fruit, soups, and vegetables can support hydration beyond water alone.</p>
+                </article>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section id="goals" class="page-section">
+          <div class="section-title-row">
+            <div>
+              <p class="section-kicker">GOAL ENGINE</p>
+              <h3>Track habits, body goals, and milestones</h3>
+            </div>
+            <span class="head-chip">Custom goals with live progress</span>
+          </div>
+
+          <div class="two-column-layout">
+            <section class="panel-card">
+              <div class="card-head">
+                <h3>Create goal</h3>
+              </div>
+              <form id="goalForm" class="form-grid">
+                <label>
+                  Goal title
+                <input type="text" name="title" placeholder="Hit 4 workouts per week" required />
+                </label>
+                <label>
+                  Category
+                  <select name="category" required>
+                    <option value="Training">Training</option>
+                    <option value="Nutrition">Nutrition</option>
+                    <option value="Recovery">Recovery</option>
+                    <option value="Body Composition">Body Composition</option>
+                    <option value="Lifestyle">Lifestyle</option>
+                  </select>
+                </label>
+                <label>
+                  Target value
+                <input type="number" name="target" min="1" max="100000" value="4" required />
+                </label>
+                <label>
+                  Unit
+                  <input type="text" name="unit" placeholder="sessions, kg, liters, days" required />
+                </label>
+                <label>
+                  Deadline
+                  <input type="date" name="deadline" required />
+                </label>
+                <label class="full-width">
+                  Why it matters
+                  <textarea     
+                    name="reason"
+                    rows="4"
+                    placeholder="Tie the goal to performance, confidence, health, or lifestyle."
+                  ></textarea>
+                </label>
+                <button class="primary-button" type="submit">Add Goal</button>
+              </form>
+            </section>
+
+            <section class="panel-card">
+              <div class="card-head">
+                <h3>Goal board</h3>
+              </div>
+              <div id="goalList" class="goal-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="progress" class="page-section">
+          <div class="section-title-row">
+            <div>
+              <p class="section-kicker">PROGRESS JOURNAL</p>
+              <h3>Log measurements and see trends</h3>
+            </div>
+            <span class="head-chip">Weight, body fat, steps, sleep</span>
+          </div>
+
+          <div class="two-column-layout">
+            <section class="panel-card">
+              <div class="card-head">
+                <h3>Add progress check-in</h3>
+              </div>
+              <form id="progressForm" class="form-grid">
+                <label>
+                  Date
+                 <input type="date" name="date" required />
+                </label>
+                <label>
+                  Weight (kg)
+                  <input type="number" name="weight" min="20" max="300" step="0.1" value="72.0" required />
+                </label>
+                <label>
+                  Body fat (%)
+                  <input type="number" name="bodyFat" min="1" max="70" step="0.1" value="18.0" required />
+                </label>
+                <label>
+                  Steps                 
+                <input type="number" name="steps" min="0" max="100000" value="8500" required />
+                </label>
+                <label>
+                  Sleep (hours)
+                  <input type="number" name="sleep" min="0" max="24" step="0.1" value="7.5" required />
+                </label>
+                <label>
+                  Mood
+                  <select name="mood">
+                    <option value="Excellent">Excellent</option>
+                    <option value="Good" selected>Good</option>
+                    <option value="Average">Average</option>
+                    <option value="Low">Low</option>
+                  </select>
+                </label>
+                <label class="full-width">
+                  Reflection
+                  <textarea     
+                    name="note"
+                    rows="4"
+                    placeholder="What changed this week? Performance wins, stress, recovery, cravings, or energy levels."
+                  ></textarea>
+                </label>
+                <button class="primary-button" type="submit">Save Check-in</button>
+              </form>
+            </section>
+
+            <section class="panel-card">
+              <div class="card-head">
+                <div>
+                  <h3>Trend view</h3>
+                  <p class="card-meta">Visual overview of body metrics and consistency.</p>
+                </div>
+              </div>
+              <div id="progressTrendChart" class="line-chart"></div>
+              <div id="progressList" class="session-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="tools" class="page-section">
+          <div class="section-title-row">
+            <div>
+              <p class="section-kicker">HEALTH TOOLS</p>
+              <h3>Run quick body and calorie calculations</h3>
+            </div>
+            <span class="head-chip">BMI, BMR, calorie targets</span>
+          </div>
+
+          <div class="three-column-layout">
+            <section class="panel-card">
+              <div class="card-head">
+                <h3>BMI Calculator</h3>
+              </div>
+              <form id="bmiForm" class="form-grid">
+                <label>
+                  Height (cm)
+                  <input type="number" name="height" min="80" max="260" value="172" required />
+                </label>
+                <label>
+                  Weight (kg)
+                  <input type="number" name="weight" min="20" max="300" step="0.1" value="72" required />
+                </label>
+                <button class="primary-button" type="submit">Calculate BMI</button>
+              </form>
+              <div class="calculator-output" id="bmiOutput">
+                <strong>0.0</strong>
+                <p>Enter values to calculate your BMI range.</p>
+              </div>
+            </section>
+
+            <section class="panel-card">
+              <div class="card-head">
+                <h3>BMR Calculator</h3>
+              </div>
+              <form id="bmrForm" class="form-grid">
+                <label>
+                  Age        
+                    <input type="number" name="age" min="10" max="100" value="24" required />
+                </label>
+                <label>
+                  Gender
+                  <select name="gender">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </label>
+                <label>
+                  Height (cm)
+                  <input type="number" name="height" min="80" max="260" value="172" required />
+                </label>
+                <label>
+                  Weight (kg)
+                  <input type="number" name="weight" min="20" max="300" step="0.1" value="72" required />
+                </label>
+                <button class="primary-button" type="submit">Calculate BMR</button>
+              </form>
+              <div class="calculator-output" id="bmrOutput">
+                <strong>0 kcal</strong>
+                <p>Your resting calorie estimate appears here.</p>
+              </div>
+            </section>
+
+            <section class="panel-card">
+              <div class="card-head">
+                <h3>Calorie Goal</h3>
+              </div>
+              <form id="calorieGoalForm" class="form-grid">
+                <label>
+                  Maintenance calories           
+                <input type="number" name="maintenance" min="800" max="6000" value="2300" required />
+                </label>
+                <label>
+                  Goal
+                    <select name="goal">
+                    <option value="cut">Fat Loss</option>
+                    <option value="maintain">Maintain</option>
+                    <option value="gain">Muscle Gain</option>
+                  </select>
+                </label>
+                <button class="primary-button" type="submit">Suggest Target</button>
+              </form>
+              <div class="calculator-output" id="calorieGoalOutput">
+                <strong>0 kcal</strong>
+                <p>Choose a strategy to see your calorie target.</p>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <footer class="footer-note">
+          <p>
+            Built with separate HTML, CSS, and vanilla JavaScript files. All data is saved in your browser using localStorage.
+          </p>
+        </footer>
+      </main>
+    </div>
+
+    <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <script src="./script.js" defer></script>
+  </body>
+</html>
