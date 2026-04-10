@@ -68,7 +68,7 @@ function bindNavigation() {
   links.forEach((link) => {
     link.addEventListener("click", (event) => {
       event.preventDefault();
-      const sectionId = link.CDATA_SECTION_NODE.sectionLink;
+      const sectionId = link.dataset.sectionLink;
       showSection(sectionId);
     });
   });
@@ -87,7 +87,7 @@ function showSection(sectionId) {
   });
 
   document.querySelectorAll(".nav-link").forEach((link) => {
-    link.classList.toggle("active", link.CDATA_SECTION_NODE.sectionLink === sectionId);
+    link.classList.toggle("active", link.dataset.sectionLink === sectionId);
   });
 
   history.replaceState(null, "", `#${sectionId}`);
@@ -143,7 +143,7 @@ function bindActions() {
 
   document.querySelectorAll(".quick-water-btn").forEach((button) => {
     button.addEventListener("click", () => {
-      const amount = Number(button.CDATA_SECTION_NODE.amount || 0);
+      const amount = Number(button.dataset.amount || 0);
       addHydrationLog({
         amount,
         timeLabel: `${amount} ml quick add`,
@@ -166,13 +166,13 @@ function handleWorkoutSubmit(event) {
 
   const workout = {
     id: createId("workout"),
-    name: Sanitizer(formData.get("name")),
-    type: Sanitizer(formData.get("type")),
-    date: Sanitizer(formData.get("date")),
+    name: sanitize(formData.get("name")),
+    type: sanitize(formData.get("type")),
+    date: sanitize(formData.get("date")),
     duration: Number(formData.get("duration")),
-    intensity: Sanitizer(formData.get("intensity")),
+    intensity: sanitize(formData.get("intensity")),
     caloriesBurned: Number(formData.get("caloriesBurned")),
-    notes: Sanitizer(formData.get("notes")),
+    notes: sanitize(formData.get("notes")),
     completed: false,
     createdAt: new Date().toISOString()
   };
@@ -192,14 +192,14 @@ function handleMealSubmit(event) {
 
   const meal = {
     id: createId("meal"),
-    name: Sanitizer(formData.get("name")),
-    mealType: Sanitizer(formData.get("mealType")),
-    date: Sanitizer(formData.get("date")),
+    name: sanitize(formData.get("name")),
+    mealType: sanitize(formData.get("mealType")),
+    date: sanitize(formData.get("date")),
     calories: Number(formData.get("calories")),
     protein: Number(formData.get("protein")),
     carbs: Number(formData.get("carbs")),
     fats: Number(formData.get("fats")),
-    notes: Sanitizer(formData.get("notes")),
+    notes: sanitize(formData.get("notes")),
     createdAt: new Date().toISOString()
   };
 
@@ -217,7 +217,7 @@ function handleHydrationSubmit(event) {
   const formData = new FormData(form);
   addHydrationLog({
     amount: Number(formData.get("amount")),
-    timeLabel: Sanitizer(formData.get("timeLabel")),
+    timeLabel: sanitize(formData.get("timeLabel")),
     date: getTodayISO()
   });
   form.reset();
@@ -230,7 +230,7 @@ function addHydrationLog(log) {
   state.hydrationLogs.unshift({
     id: createId("water"),
     amount: Number(log.amount),
-    timeLabel: Sanitizer(log.timeLabel),
+    timeLabel: sanitize(log.timeLabel),
     date: log.date || getTodayISO(),
     createdAt: new Date().toISOString()
   });
@@ -255,12 +255,12 @@ function handleGoalSubmit(event) {
 
   const goal = {
     id: createId("goal"),
-    title: Sanitizer(formData.get("title")),
-    category: Sanitizer(formData.get("category")),
+    title: sanitize(formData.get("title")),
+    category: sanitize(formData.get("category")),
     target: Number(formData.get("target")),
-    unit: Sanitizer(formData.get("unit")),
-    deadline: Sanitizer(formData.get("deadline")),
-    reason: Sanitizer(formData.get("reason")),
+    unit: sanitize(formData.get("unit")),
+    deadline: sanitize(formData.get("deadline")),
+    reason: sanitize(formData.get("reason")),
     progress: 0,
     completed: false,
     createdAt: new Date().toISOString()
@@ -281,13 +281,13 @@ function handleProgressSubmit(event) {
 
   const entry = {
     id: createId("progress"),
-    date: Sanitizer(formData.get("date")),
+    date: sanitize(formData.get("date")),
     weight: Number(formData.get("weight")),
     bodyFat: Number(formData.get("bodyFat")),
     steps: Number(formData.get("steps")),
     sleep: Number(formData.get("sleep")),
-    mood: Sanitizer(formData.get("mood")),
-    note: Sanitizer(formData.get("note")),
+    mood: sanitize(formData.get("mood")),
+    note: sanitize(formData.get("note")),
     createdAt: new Date().toISOString()
   };
 
@@ -374,8 +374,8 @@ function renderAll() {
 
 function updateHydrationSettingsForm() {
   const hydrationTargetForm = document.getElementById("hydrationTargetForm");
-  hydrationTargetForm.nextElementSibling.target.value = state.hydrationTarget;
-  hydrationTargetForm.nextElementSibling.interval.value = String(state.hydrationInterval);
+  hydrationTargetForm.elements.target.value = state.hydrationTarget;
+  hydrationTargetForm.elements.interval.value = String(state.hydrationInterval);
 }
 
 function renderOverviewStats() {
@@ -415,14 +415,14 @@ function renderOverviewStats() {
   setText("sidebarStreak", `${streakDays} days`);
 
   const stepsPercent = getPercent(latestSteps, 10000);
-  SVGAnimatedString("steps", stepsPercent, "stepsRingValue", "stepsRingText", `${latestSteps} / 10000 steps`);
-  SVGAnimatedString("water", waterPercent, "waterRingValue", "waterRingText", `${hydrationToday} / ${state.hydrationTarget} ml`);
-  SVGAnimatedString("protein", getPercent(proteinToday, 140), "proteinRingValue", "proteinRingText", `${proteinToday} / 140 g`);
+  setRing("steps", stepsPercent, "stepsRingValue", "stepsRingText", `${latestSteps} / 10000 steps`);
+  setRing("water", waterPercent, "waterRingValue", "waterRingText", `${hydrationToday} / ${state.hydrationTarget} ml`);
+  setRing("protein", getPercent(proteinToday, 140), "proteinRingValue", "proteinRingText", `${proteinToday} / 140 g`);
 }
 
 function setRing(name, percent, valueId, textId, copy) {
   const ring = document.querySelector(`.progress-ring[data-ring="${name}"]`);
-  ring.computedStyleMap.setProperty("--fill", `${Math.min(percent, 100)}%`);
+  ring.style.setProperty("--fill", `${Math.min(percent, 100)}%`);
   setText(valueId, `${Math.min(percent, 100)}%`);
   setText(textId, copy);
 }
@@ -440,7 +440,7 @@ function renderWeeklyWorkoutChart() {
 
   const maxMinutes = Math.max(...workoutsByDay.map((item) => item.minutes), 60);
 
-  container.innerHTML = workoutsByDay    .map((item) => {
+  container.innerHTML = workoutsByDay.map((item) => {
       const height = Math.max((item.minutes / maxMinutes) * 100, item.minutes > 0 ? 10 : 4);
       return `
         <div class="bar-chart__item">
@@ -466,7 +466,7 @@ function renderOverviewWorkouts() {
     return;
   }
 
-  container.innerHTML = upcoming.   .map(
+  container.innerHTML = upcoming.map(
       (workout) => `
         <article class="list-card">
           <strong>${escapeHtml(workout.name)}</strong>
@@ -481,7 +481,7 @@ function renderInsights() {
   const container = document.getElementById("insightsList");
   const insights = buildInsights();
 
-  container.innerHTML = insights.   .map(
+  container.innerHTML = insights.map(
       (insight) => `
         <article class="insight-card">
           <strong>${escapeHtml(insight.title)}</strong>
@@ -558,7 +558,7 @@ function renderWorkoutSection() {
   setText("workoutCompletedCount", `${completed} completed`);
 
   const counts = countBy(workouts, "type");
-  breakdown.innerHTML = Object.keys(counts).length.   ? Object.entries(counts)
+  breakdown.innerHTML = Object.keys(counts).length ? Object.entries(counts)
         .map(([type, count]) => `<span class="tiny-chip">${escapeHtml(type)}: ${count}</span>`)
         .join("")
     : `<div class="empty-state">No workouts added yet.</div>`;
@@ -568,7 +568,7 @@ function renderWorkoutSection() {
     return;
   }
 
-  list.innerHTML = workouts.   .map(
+  list.innerHTML = workouts.map(
       (workout) => `
         <article class="session-card">
           <div class="session-top">
@@ -612,7 +612,7 @@ function handleWorkoutAction(event) {
 
   if (action === "toggle-workout") {
     state.workouts = state.workouts.map((workout) =>
-      workout.id === id ? { ...workout, completed: !workout.completed } : workout.   );
+      workout.id === id ? { ...workout, completed: !workout.completed } : workout );
     saveState();
     renderAll();
     return;
@@ -647,7 +647,7 @@ function renderNutritionSection() {
     return;
   }
 
-  list.innerHTML = meals.   .slice(0, 8)
+  list.innerHTML = meals.slice(0, 8)
     .map(
       (meal) => `
         <article class="session-card">
@@ -726,7 +726,7 @@ function renderHydrationSection() {
     return;
   }
 
-  timeline.innerHTML = logs.   .slice(0, 8)
+  timeline.innerHTML = logs.slice(0, 8)
     .map(
       (log) => `
         <article class="timeline-card">
@@ -761,7 +761,7 @@ function renderGoalsSection() {
     return;
   }
 
-  list.innerHTML = state.goals.   .map((goal) => {
+  list.innerHTML = state.goals.map((goal) => {
       const percent = Math.min(getPercent(goal.progress, goal.target), 100);
       return `
         <article class="goal-card">
@@ -848,7 +848,7 @@ function renderProgressSection() {
   const latestSeven = entries.slice(-7);
   const maxWeight = Math.max(...latestSeven.map((entry) => entry.weight), 1);
 
-  chart.innerHTML = latestSeven.   .map((entry) => {
+  chart.innerHTML = latestSeven.map((entry) => {
       const height = Math.max((entry.weight / maxWeight) * 170, 36);
       return `
         <div class="line-chart__point-wrap">
@@ -904,7 +904,7 @@ function renderProgressSection() {
 }
 
 function getHydrationTodayAmount() {
-  return state.hydrationLogs    .filter((log) => log.date === getTodayISO())
+  return state.hydrationLogs.filter((log) => log.date === getTodayISO())
     .reduce((total, log) => total + Number(log.amount || 0), 0);
 }
 
@@ -1003,7 +1003,7 @@ function getPercent(value, total) {
 
 function calculateStreak() {
   const dates = new Set();
-  state.workouts.   .filter((workout) => workout.completed)
+  state.workouts.filter((workout) => workout.completed)
     .forEach((workout) => dates.add(workout.date));
   state.meals.forEach((meal) => dates.add(meal.date));
   state.hydrationLogs.forEach((log) => dates.add(log.date));
